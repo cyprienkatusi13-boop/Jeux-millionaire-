@@ -1,0 +1,829 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizMaster — Culture Générale & Géographie</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0F1A;
+    --surface: #131929;
+    --card: #1A2236;
+    --border: #2A3650;
+    --accent: #5B8BFF;
+    --accent2: #A78BFA;
+    --gold: #F59E0B;
+    --green: #10B981;
+    --red: #EF4444;
+    --text: #E8EDF7;
+    --muted: #7B8DB0;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* AD BANNER */
+  .ad-banner {
+    width: 100%;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .ad-slot {
+    background: linear-gradient(135deg, #1A2236, #0F1826);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 12px 24px;
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .app {
+    width: 100%;
+    max-width: 680px;
+    padding: 24px 16px 40px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding-top: 8px;
+  }
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 7vw, 42px);
+    line-height: 1.1;
+    background: linear-gradient(135deg, #E8EDF7 30%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  /* SCORE BAR */
+  .score-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    gap: 16px;
+  }
+  .score-item { text-align: center; }
+  .score-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Instrument Serif', serif;
+    display: block;
+  }
+  .score-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .score-divider { width: 1px; height: 40px; background: var(--border); }
+
+  /* CATEGORY TABS */
+  .category-bar {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .category-bar::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .cat-btn:hover { border-color: var(--accent); color: var(--text); }
+  .cat-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .q-category {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .q-number { font-size: 12px; color: var(--muted); }
+
+  .question-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(18px, 4vw, 22px);
+    line-height: 1.45;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  /* OPTIONS */
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .option-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(91,139,255,0.08);
+    transform: translateX(4px);
+  }
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .option-btn.correct {
+    border-color: var(--green);
+    background: rgba(16,185,129,0.12);
+  }
+  .option-btn.correct .option-letter { background: var(--green); color: white; }
+  .option-btn.wrong {
+    border-color: var(--red);
+    background: rgba(239,68,68,0.10);
+  }
+  .option-btn.wrong .option-letter { background: var(--red); color: white; }
+  .option-btn:disabled { cursor: not-allowed; }
+
+  /* FEEDBACK */
+  .feedback {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback.correct-fb { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #6EE7B7; }
+  .feedback.wrong-fb { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #FCA5A5; }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* START SCREEN */
+  .start-screen {
+    text-align: center;
+    padding: 8px 0;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: left;
+  }
+  .feature-icon { font-size: 22px; margin-bottom: 6px; }
+  .feature-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .feature-desc { font-size: 12px; color: var(--muted); }
+
+  /* RESULTS */
+  .results-screen { text-align: center; }
+  .big-score {
+    font-family: 'Instrument Serif', serif;
+    font-size: 80px;
+    background: linear-gradient(135deg, var(--gold), #FCD34D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin: 16px 0 4px;
+  }
+  .score-out-of { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .result-msg {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .result-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 12px;
+  }
+  .stat-number { font-size: 24px; font-weight: 700; font-family: 'Instrument Serif', serif; }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  /* LOADING */
+  .loading-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  .loading-text { font-size: 14px; }
+
+  /* AD SIDE */
+  .ad-side {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .ad-side-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- TOP AD BANNER -->
+<div class="ad-banner">
+  Publicité
+  <div class="ad-slot">
+    <!-- Google AdSense → remplacer par votre code AdSense ici -->
+    📢 Espace publicitaire — 728×90 — Connecter Google AdSense
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-badge">🌍 Quiz en ligne</div>
+    <h1>QuizMaster</h1>
+    <p class="subtitle">Culture générale & Géographie — Questions générées par IA</p>
+  </header>
+
+  <!-- SCORE BAR (masquée au départ) -->
+  <div class="score-bar hidden" id="scoreBar">
+    <div class="score-item">
+      <span class="score-value" id="currentScore" style="color:var(--gold)">0</span>
+      <span class="score-label">Score</span>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <span class="score-value" id="currentStreak" style="color:var(--green)">0</span>
+      <span class="score-label">Série</span>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <span class="score-value" id="currentQ">1</span>
+      <span class="score-label">Question</span>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <span class="score-value" id="totalQ">10</span>
+      <span class="score-label">Total</span>
+    </div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div id="startScreen" class="start-screen">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">IA en temps réel</div>
+        <div class="feature-desc">Questions uniques à chaque partie</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">Multi-thèmes</div>
+        <div class="feature-desc">Géographie, histoire, sciences…</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">QCM interactif</div>
+        <div class="feature-desc">4 choix par question</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Suivi du score</div>
+        <div class="feature-desc">Statistiques & série en cours</div>
+      </div>
+    </div>
+
+    <!-- CATEGORY SELECT -->
+    <div style="margin-bottom:16px;">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">Choisir un thème :</p>
+      <div class="category-bar" id="catBar">
+        <button class="cat-btn active" data-cat="Tous les thèmes">🎯 Tous</button>
+        <button class="cat-btn" data-cat="Géographie">🗺️ Géographie</button>
+        <button class="cat-btn" data-cat="Histoire">📜 Histoire</button>
+        <button class="cat-btn" data-cat="Sciences">🔬 Sciences</button>
+        <button class="cat-btn" data-cat="Sport">⚽ Sport</button>
+        <button class="cat-btn" data-cat="Cinéma et culture">🎬 Cinéma</button>
+        <button class="cat-btn" data-cat="Gastronomie">🍽️ Cuisine</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="startBtn" onclick="startQuiz()">
+      🚀 Lancer le quiz
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingScreen" class="loading-state hidden">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Génération des questions…</div>
+  </div>
+
+  <!-- QUESTION SCREEN -->
+  <div id="questionScreen" class="hidden">
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="q-category" id="qCategory">Géographie</span>
+        <span class="q-number" id="qNumber">Q1 / 10</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="question-text" id="questionText">Chargement…</div>
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <!-- AD BETWEEN QUESTIONS -->
+    <div class="ad-side" id="adMid">
+      <div class="ad-side-label">Publicité</div>
+      <div>📱 Espace 300×250 — Google AdSense</div>
+      <div style="font-size:10px;margin-top:4px;">Remplacer par votre bloc AdSense</div>
+    </div>
+
+    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" style="margin-top:0;" disabled>
+      Question suivante →
+    </button>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="resultsScreen" class="results-screen hidden">
+    <div style="font-size:40px;margin-bottom:4px;">🏆</div>
+    <h2 style="font-family:'Instrument Serif',serif;font-size:26px;">Résultats finaux</h2>
+    <div class="big-score" id="finalScore">0</div>
+    <div class="score-out-of" id="scoreOutOf">sur 10</div>
+    <div class="result-msg" id="resultMsg">Bravo !</div>
+    <div class="result-sub" id="resultSub">Beau score !</div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number" id="statCorrect" style="color:var(--green)">0</div>
+        <div class="stat-label">✅ Bonnes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statWrong" style="color:var(--red)">0</div>
+        <div class="stat-label">❌ Mauvaises</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statPct" style="color:var(--gold)">0%</div>
+        <div class="stat-label">🎯 Précision</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM AD -->
+    <div class="ad-side" style="margin-bottom:16px;">
+      <div class="ad-side-label">Publicité</div>
+      <div>📢 Espace publicitaire — Google AdSense</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="restartQuiz()">
+      🔄 Rejouer
+    </button>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS_PER_GAME = 10;
+
+// Banque de questions fixes (pas d'IA, fonctionne sans connexion API)
+const QUESTION_BANK = {
+  "Géographie": [
+    { question: "Quelle est la capitale de l'Australie ?", options: ["Sydney", "Melbourne", "Canberra", "Brisbane"], answer: 2, explanation: "Canberra est la capitale officielle de l'Australie depuis 1927." },
+    { question: "Quel est le plus long fleuve du monde ?", options: ["Amazone", "Nil", "Yangtsé", "Mississippi"], answer: 1, explanation: "Le Nil mesure environ 6 650 km, légèrement plus que l'Amazone selon les mesures." },
+    { question: "Quel pays a la plus grande superficie au monde ?", options: ["Chine", "Canada", "Russie", "États-Unis"], answer: 2, explanation: "La Russie s'étend sur environ 17 millions de km², répartis sur 11 fuseaux horaires." },
+    { question: "Quelle montagne est la plus haute du monde ?", options: ["K2", "Mont Blanc", "Everest", "Kilimandjaro"], answer: 2, explanation: "L'Everest culmine à 8 849 mètres, à la frontière entre le Népal et la Chine." },
+    { question: "Dans quel pays se trouve le désert du Sahara principalement ?", options: ["Égypte", "Algérie", "Libye", "Plusieurs pays d'Afrique du Nord"], answer: 3, explanation: "Le Sahara s'étend sur 11 pays d'Afrique du Nord." },
+    { question: "Quelle est la capitale du Canada ?", options: ["Toronto", "Vancouver", "Ottawa", "Montréal"], answer: 2, explanation: "Ottawa est la capitale du Canada, située en Ontario." },
+    { question: "Quel océan est le plus grand du monde ?", options: ["Atlantique", "Indien", "Pacifique", "Arctique"], answer: 2, explanation: "L'océan Pacifique couvre environ un tiers de la surface du globe." },
+    { question: "Combien de pays composent le continent africain ?", options: ["44", "54", "64", "34"], answer: 1, explanation: "L'Afrique compte 54 pays reconnus par l'ONU." },
+    { question: "Quelle ville est surnommée la 'Ville Lumière' ?", options: ["Londres", "Paris", "Rome", "New York"], answer: 1, explanation: "Paris doit ce surnom à son rôle pionnier dans l'éclairage public et les Lumières." },
+    { question: "Quel est le plus petit pays du monde ?", options: ["Monaco", "Vatican", "Liechtenstein", "Saint-Marin"], answer: 1, explanation: "Le Vatican s'étend sur environ 0,44 km²." },
+    { question: "Quelle chaîne de montagnes sépare l'Europe et l'Asie ?", options: ["Les Alpes", "Les Carpates", "L'Oural", "Les Pyrénées"], answer: 2, explanation: "La chaîne de l'Oural marque traditionnellement la frontière entre l'Europe et l'Asie." },
+    { question: "Quel pays compte le plus d'habitants au monde ?", options: ["Chine", "Inde", "États-Unis", "Indonésie"], answer: 1, explanation: "L'Inde a dépassé la Chine en population depuis 2023." },
+    { question: "Quelle est la capitale du Japon ?", options: ["Osaka", "Kyoto", "Tokyo", "Yokohama"], answer: 2, explanation: "Tokyo est la capitale du Japon depuis 1868." },
+    { question: "Quel détroit sépare l'Europe et l'Afrique ?", options: ["Détroit de Gibraltar", "Détroit de Bering", "Détroit de Malacca", "Détroit du Bosphore"], answer: 0, explanation: "Le détroit de Gibraltar sépare l'Espagne du Maroc." },
+    { question: "Quel pays possède le plus de fuseaux horaires ?", options: ["États-Unis", "Russie", "France", "Chine"], answer: 2, explanation: "Grâce à ses territoires d'outre-mer, la France couvre 12 fuseaux horaires." }
+  ],
+  "Histoire": [
+    { question: "En quelle année a eu lieu la Révolution française ?", options: ["1789", "1799", "1804", "1815"], answer: 0, explanation: "La Révolution française a débuté en 1789 avec la prise de la Bastille." },
+    { question: "Qui était le premier empereur romain ?", options: ["Jules César", "Auguste", "Néron", "Trajan"], answer: 1, explanation: "Auguste est devenu le premier empereur romain en 27 av. J.-C." },
+    { question: "Quelle guerre a opposé les forces alliées à l'Allemagne nazie ?", options: ["Première Guerre mondiale", "Deuxième Guerre mondiale", "Guerre froide", "Guerre de Corée"], answer: 1, explanation: "La Seconde Guerre mondiale s'est déroulée de 1939 à 1945." },
+    { question: "Qui a découvert l'Amérique en 1492 ?", options: ["Vasco de Gama", "Christophe Colomb", "Magellan", "Marco Polo"], answer: 1, explanation: "Christophe Colomb atteint les Amériques en 1492, pensant avoir trouvé les Indes." },
+    { question: "Quel mur est tombé en 1989 ?", options: ["Mur de Berlin", "Grande Muraille de Chine", "Mur d'Hadrien", "Mur de Chine"], answer: 0, explanation: "La chute du mur de Berlin a symbolisé la fin de la Guerre froide." },
+    { question: "Qui était roi de France au moment de la Révolution ?", options: ["Louis XIV", "Louis XV", "Louis XVI", "Napoléon"], answer: 2, explanation: "Louis XVI a été guillotiné en 1793 pendant la Révolution." },
+    { question: "Quelle civilisation a construit les pyramides de Gizeh ?", options: ["Les Mayas", "Les Égyptiens", "Les Romains", "Les Grecs"], answer: 1, explanation: "Les pyramides de Gizeh ont été construites par les anciens Égyptiens il y a environ 4 500 ans." },
+    { question: "Qui a été le premier président des États-Unis ?", options: ["Thomas Jefferson", "Abraham Lincoln", "George Washington", "John Adams"], answer: 2, explanation: "George Washington a été le premier président des États-Unis, de 1789 à 1797." },
+    { question: "En quelle année a commencé la Première Guerre mondiale ?", options: ["1912", "1914", "1916", "1918"], answer: 1, explanation: "La Première Guerre mondiale a débuté en 1914 après l'assassinat de l'archiduc François-Ferdinand." },
+    { question: "Quel empire a été dirigé par Gengis Khan ?", options: ["Empire mongol", "Empire ottoman", "Empire perse", "Empire romain"], answer: 0, explanation: "Gengis Khan a fondé l'Empire mongol au 13e siècle, le plus vaste empire terrestre de l'histoire." },
+    { question: "Quelle reine d'Égypte est célèbre pour sa relation avec Marc Antoine ?", options: ["Néfertiti", "Cléopâtre", "Hatchepsout", "Néfertari"], answer: 1, explanation: "Cléopâtre VII fut la dernière pharaonne d'Égypte." },
+    { question: "Quel événement a marqué le début de la Première Guerre mondiale ?", options: ["L'invasion de la Pologne", "L'assassinat de François-Ferdinand", "Le traité de Versailles", "La crise de 1929"], answer: 1, explanation: "L'assassinat de l'archiduc François-Ferdinand à Sarajevo en 1914 a déclenché le conflit." },
+    { question: "Qui a écrit la Déclaration d'indépendance américaine ?", options: ["Benjamin Franklin", "Thomas Jefferson", "George Washington", "Alexander Hamilton"], answer: 1, explanation: "Thomas Jefferson est le principal rédacteur du texte, adopté en 1776." },
+    { question: "Quelle bataille a marqué la défaite finale de Napoléon ?", options: ["Austerlitz", "Trafalgar", "Waterloo", "Iéna"], answer: 2, explanation: "La bataille de Waterloo en 1815 a définitivement mis fin au règne de Napoléon." },
+    { question: "Quel pays a été le premier à envoyer un homme dans l'espace ?", options: ["États-Unis", "URSS", "France", "Chine"], answer: 1, explanation: "Youri Gagarine, soviétique, est devenu le premier homme dans l'espace en 1961." }
+  ],
+  "Sciences": [
+    { question: "Quelle est la formule chimique de l'eau ?", options: ["CO2", "H2O", "O2", "NaCl"], answer: 1, explanation: "L'eau est composée de deux atomes d'hydrogène et un atome d'oxygène." },
+    { question: "Quelle planète est la plus proche du Soleil ?", options: ["Vénus", "Mercure", "Mars", "Terre"], answer: 1, explanation: "Mercure est la planète la plus proche du Soleil dans notre système solaire." },
+    { question: "Combien d'os compte le corps humain adulte ?", options: ["186", "206", "226", "246"], answer: 1, explanation: "Le squelette humain adulte compte 206 os." },
+    { question: "Quel gaz les plantes absorbent-elles pour la photosynthèse ?", options: ["Oxygène", "Azote", "Dioxyde de carbone", "Hydrogène"], answer: 2, explanation: "Les plantes absorbent le CO2 et rejettent de l'oxygène lors de la photosynthèse." },
+    { question: "Qui a formulé la théorie de la relativité ?", options: ["Isaac Newton", "Albert Einstein", "Niels Bohr", "Galilée"], answer: 1, explanation: "Albert Einstein a publié la théorie de la relativité restreinte en 1905." },
+    { question: "Quel est l'organe le plus grand du corps humain ?", options: ["Le foie", "Le cœur", "La peau", "Le cerveau"], answer: 2, explanation: "La peau est le plus grand organe, représentant environ 16% du poids corporel." },
+    { question: "Quelle est l'unité de mesure de la force ?", options: ["Watt", "Newton", "Joule", "Pascal"], answer: 1, explanation: "Le Newton (N) est l'unité de mesure de la force dans le système international." },
+    { question: "Combien de chromosomes possède une cellule humaine normale ?", options: ["44", "46", "48", "50"], answer: 1, explanation: "Une cellule humaine normale possède 46 chromosomes, soit 23 paires." },
+    { question: "Quelle est la vitesse de la lumière dans le vide ?", options: ["300 000 km/s", "150 000 km/s", "500 000 km/s", "1 000 000 km/s"], answer: 0, explanation: "La lumière se déplace à environ 299 792 km/s dans le vide." },
+    { question: "Quel scientifique a découvert la pénicilline ?", options: ["Louis Pasteur", "Alexander Fleming", "Marie Curie", "Robert Koch"], answer: 1, explanation: "Alexander Fleming a découvert la pénicilline en 1928." },
+    { question: "Quelle est la planète la plus grande du système solaire ?", options: ["Saturne", "Jupiter", "Neptune", "Uranus"], answer: 1, explanation: "Jupiter est la plus grande planète, avec un diamètre 11 fois supérieur à celui de la Terre." },
+    { question: "Quel métal est liquide à température ambiante ?", options: ["Fer", "Mercure", "Plomb", "Zinc"], answer: 1, explanation: "Le mercure est le seul métal liquide à température ambiante." },
+    { question: "Combien de cœurs possède une pieuvre ?", options: ["1", "2", "3", "4"], answer: 2, explanation: "Une pieuvre possède trois cœurs, dont deux pompent le sang vers les branchies." },
+    { question: "Quel élément chimique a pour symbole 'O' ?", options: ["Or", "Oxygène", "Osmium", "Argent"], answer: 1, explanation: "Le symbole 'O' désigne l'oxygène dans le tableau périodique." },
+    { question: "Quelle partie du cerveau contrôle l'équilibre ?", options: ["Le cortex", "Le cervelet", "L'hippocampe", "L'amygdale"], answer: 1, explanation: "Le cervelet est responsable de la coordination des mouvements et de l'équilibre." }
+  ],
+  "Sport": [
+    { question: "Combien de joueurs compte une équipe de football sur le terrain ?", options: ["9", "10", "11", "12"], answer: 2, explanation: "Une équipe de football aligne 11 joueurs, dont un gardien." },
+    { question: "Dans quel sport peut-on réaliser un 'ace' ?", options: ["Football", "Tennis", "Basketball", "Rugby"], answer: 1, explanation: "Un 'ace' au tennis désigne un service que l'adversaire ne peut pas toucher." },
+    { question: "Tous les combien d'années ont lieu les Jeux Olympiques d'été ?", options: ["2 ans", "3 ans", "4 ans", "5 ans"], answer: 2, explanation: "Les Jeux Olympiques d'été se déroulent tous les 4 ans." },
+    { question: "Combien de points vaut un panier à 3 points en basketball ?", options: ["2", "3", "4", "5"], answer: 1, explanation: "Un panier marqué derrière la ligne à 3 points vaut 3 points." },
+    { question: "Quel pays a inventé le rugby ?", options: ["France", "Nouvelle-Zélande", "Angleterre", "Afrique du Sud"], answer: 2, explanation: "Le rugby est né en Angleterre, à l'école de Rugby, au 19e siècle." },
+    { question: "Combien de sets faut-il gagner pour remporter un match de tennis en Grand Chelem (hommes) ?", options: ["2", "3", "4", "5"], answer: 2, explanation: "Les hommes doivent gagner 3 sets sur 5 dans les tournois du Grand Chelem." },
+    { question: "Quel sport utilise un terme appelé 'crampons' ?", options: ["Tennis", "Football", "Golf", "Natation"], answer: 1, explanation: "Les crampons sont les chaussures spécifiques utilisées au football pour l'adhérence." },
+    { question: "Quelle distance fait un marathon ?", options: ["35 km", "40 km", "42,195 km", "45 km"], answer: 2, explanation: "Un marathon mesure exactement 42,195 kilomètres." },
+    { question: "Dans quel sport utilise-t-on le terme 'KO' ?", options: ["Judo", "Boxe", "Escrime", "Lutte"], answer: 1, explanation: "Le KO (knock-out) en boxe désigne la mise hors combat d'un adversaire." },
+    { question: "Quel pays a remporté le plus de Coupes du Monde de football ?", options: ["Allemagne", "Argentine", "Brésil", "Italie"], answer: 2, explanation: "Le Brésil a remporté 5 Coupes du Monde, un record." },
+    { question: "Combien de joueurs compte une équipe de basketball sur le terrain ?", options: ["4", "5", "6", "7"], answer: 1, explanation: "Une équipe de basketball aligne 5 joueurs sur le terrain." },
+    { question: "Quel sport se pratique sur un green ?", options: ["Tennis", "Golf", "Cricket", "Hockey"], answer: 1, explanation: "Le golf se joue sur un parcours dont la zone autour du trou s'appelle le green." },
+    { question: "Quelle ville a accueilli les Jeux Olympiques de 2024 ?", options: ["Tokyo", "Londres", "Paris", "Los Angeles"], answer: 2, explanation: "Paris a accueilli les Jeux Olympiques d'été en 2024." },
+    { question: "Dans quel sport y a-t-il des 'manches' appelées 'rounds' ?", options: ["Tennis", "Boxe", "Football", "Volleyball"], answer: 1, explanation: "La boxe se divise en rounds, généralement de 2 à 3 minutes chacun." },
+    { question: "Quel est le score maximum possible pour une seule flèche au tir à l'arc olympique ?", options: ["8", "9", "10", "12"], answer: 2, explanation: "Le centre de la cible (le 10) rapporte le maximum de points par flèche." }
+  ],
+  "Cinéma et culture": [
+    { question: "Qui a réalisé le film 'Titanic' (1997) ?", options: ["Steven Spielberg", "James Cameron", "Christopher Nolan", "Martin Scorsese"], answer: 1, explanation: "James Cameron a réalisé Titanic, sorti en 1997." },
+    { question: "Quel acteur incarne Iron Man dans l'univers Marvel ?", options: ["Chris Evans", "Robert Downey Jr.", "Chris Hemsworth", "Mark Ruffalo"], answer: 1, explanation: "Robert Downey Jr. incarne Tony Stark / Iron Man depuis 2008." },
+    { question: "Quel film a remporté l'Oscar du meilleur film en 2020 ?", options: ["1917", "Joker", "Parasite", "Once Upon a Time in Hollywood"], answer: 2, explanation: "Parasite, film sud-coréen, a remporté l'Oscar du meilleur film en 2020, une première historique." },
+    { question: "Qui a composé la musique de 'Star Wars' ?", options: ["Hans Zimmer", "John Williams", "Danny Elfman", "James Horner"], answer: 1, explanation: "John Williams a composé les musiques emblématiques de la saga Star Wars." },
+    { question: "Dans quel film trouve-t-on le personnage de Forrest Gump ?", options: ["Forrest Gump", "Cast Away", "Big", "The Green Mile"], answer: 0, explanation: "Tom Hanks incarne Forrest Gump dans le film éponyme de 1994." },
+    { question: "Quel est le studio derrière les films 'Toy Story' ?", options: ["DreamWorks", "Pixar", "Disney Animation", "Illumination"], answer: 1, explanation: "Pixar a produit la saga Toy Story, en partenariat avec Disney pour la distribution." },
+    { question: "Qui a réalisé la trilogie 'Le Seigneur des Anneaux' ?", options: ["Peter Jackson", "Ridley Scott", "Guillermo del Toro", "George Lucas"], answer: 0, explanation: "Peter Jackson a réalisé la trilogie adaptée des romans de Tolkien." },
+    { question: "Quel film français a remporté plusieurs César en 2012 avec un duo improbable d'amis ?", options: ["Intouchables", "La Famille Bélier", "Le Fabuleux Destin d'Amélie Poulain", "Bienvenue chez les Ch'tis"], answer: 0, explanation: "Intouchables, avec Omar Sy et François Cluzet, a rencontré un immense succès en 2011." },
+    { question: "Quel est le nom du réalisateur de 'Inception' et 'Interstellar' ?", options: ["Denis Villeneuve", "Christopher Nolan", "David Fincher", "Quentin Tarantino"], answer: 1, explanation: "Christopher Nolan a réalisé ces deux films de science-fiction acclamés." },
+    { question: "Quel personnage Disney chante 'Let It Go' ?", options: ["Anna", "Elsa", "Rapunzel", "Moana"], answer: 1, explanation: "Elsa chante ce titre emblématique dans le film 'La Reine des Neiges'." },
+    { question: "Qui joue le rôle principal dans la saga 'Harry Potter' ?", options: ["Daniel Radcliffe", "Rupert Grint", "Tom Felton", "Matthew Lewis"], answer: 0, explanation: "Daniel Radcliffe incarne Harry Potter dans les 8 films de la saga." },
+    { question: "Quel film d'animation met en scène un lion nommé Simba ?", options: ["Madagascar", "Le Roi Lion", "Kung Fu Panda", "Zootopie"], answer: 1, explanation: "Le Roi Lion (1994) suit le parcours du jeune lion Simba." },
+    { question: "Quel acteur a incarné le Joker dans 'The Dark Knight' (2008) ?", options: ["Jared Leto", "Joaquin Phoenix", "Heath Ledger", "Jack Nicholson"], answer: 2, explanation: "Heath Ledger a remporté un Oscar posthume pour son rôle de Joker." },
+    { question: "Quelle saga de films met en scène des dinosaures recréés par clonage ?", options: ["Godzilla", "Jurassic Park", "King Kong", "The Land Before Time"], answer: 1, explanation: "La saga Jurassic Park, débutée en 1993, repose sur ce concept." },
+    { question: "Quel est le premier long-métrage d'animation Disney ?", options: ["Pinocchio", "Blanche-Neige et les Sept Nains", "Fantasia", "Bambi"], answer: 1, explanation: "Blanche-Neige et les Sept Nains, sorti en 1937, est le premier long-métrage d'animation de Disney." }
+  ],
+  "Gastronomie": [
+    { question: "De quel pays est originaire la pizza ?", options: ["France", "Espagne", "Italie", "Grèce"], answer: 2, explanation: "La pizza est originaire d'Italie, notamment de la région de Naples." },
+    { question: "Quel ingrédient principal compose le guacamole ?", options: ["Tomate", "Avocat", "Poivron", "Oignon"], answer: 1, explanation: "Le guacamole est principalement composé d'avocat écrasé." },
+    { question: "Quel fromage est traditionnellement utilisé dans la pizza margherita ?", options: ["Roquefort", "Mozzarella", "Comté", "Chèvre"], answer: 1, explanation: "La mozzarella est le fromage classique de la pizza margherita." },
+    { question: "Quelle boisson est obtenue par fermentation du raisin ?", options: ["Bière", "Vin", "Cidre", "Whisky"], answer: 1, explanation: "Le vin résulte de la fermentation du jus de raisin." },
+    { question: "De quel pays vient le sushi ?", options: ["Chine", "Corée", "Japon", "Thaïlande"], answer: 2, explanation: "Le sushi est un plat traditionnel japonais à base de riz vinaigré et de poisson." },
+    { question: "Quel ingrédient donne sa couleur rouge au paprika ?", options: ["Tomate", "Piment", "Poivron rouge séché", "Betterave"], answer: 2, explanation: "Le paprika est fabriqué à partir de poivrons rouges séchés et moulus." },
+    { question: "Quelle ville française est réputée pour ses macarons colorés ?", options: ["Lyon", "Marseille", "Paris", "Bordeaux"], answer: 2, explanation: "Paris, notamment grâce à des maisons comme Ladurée, est célèbre pour ses macarons." },
+    { question: "Quel plat est typiquement composé de pâtes, lardons, œuf et parmesan ?", options: ["Bolognaise", "Carbonara", "Lasagne", "Arrabbiata"], answer: 1, explanation: "La carbonara est une recette italienne à base d'œufs, de lardons (guanciale) et de parmesan." },
+    { question: "Quelle épice est extraite des stigmates d'une fleur de crocus ?", options: ["Curcuma", "Safran", "Cannelle", "Cumin"], answer: 1, explanation: "Le safran, l'épice la plus chère au monde, provient des stigmates du crocus sativus." },
+    { question: "Quel pays est le plus grand producteur de café au monde ?", options: ["Colombie", "Vietnam", "Brésil", "Éthiopie"], answer: 2, explanation: "Le Brésil est le premier producteur mondial de café depuis plus de 150 ans." },
+    { question: "Quel dessert français est constitué de pâte à choux et de crème pâtissière ?", options: ["Macaron", "Éclair", "Tarte Tatin", "Madeleine"], answer: 1, explanation: "L'éclair est composé de pâte à choux fourrée de crème, souvent au chocolat ou au café." },
+    { question: "Quelle viande compose traditionnellement un kebab turc ?", options: ["Bœuf uniquement", "Porc", "Agneau ou poulet", "Poisson"], answer: 2, explanation: "Le kebab traditionnel est généralement préparé avec de l'agneau ou du poulet." },
+    { question: "Quel fruit est utilisé pour fabriquer le cidre ?", options: ["Raisin", "Pomme", "Poire uniquement", "Pêche"], answer: 1, explanation: "Le cidre est traditionnellement fabriqué à partir de pommes fermentées." },
+    { question: "Quelle sauce est à base de jaune d'œuf, de beurre et de citron ?", options: ["Sauce béchamel", "Sauce hollandaise", "Sauce tartare", "Sauce béarnaise"], answer: 1, explanation: "La sauce hollandaise est une émulsion de jaune d'œuf, beurre fondu et jus de citron." },
+    { question: "D'où provient originellement le chocolat (cacao) ?", options: ["Afrique", "Asie", "Amérique centrale", "Europe"], answer: 2, explanation: "Le cacaoyer est originaire d'Amérique centrale, où il était cultivé par les civilisations précolombiennes." }
+  ]
+};
+
+// Mélange un tableau (algorithme de Fisher-Yates)
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let correct = 0;
+let wrong = 0;
+let streak = 0;
+let selectedCategory = "Tous les thèmes";
+let answered = false;
+
+// Category buttons
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedCategory = btn.dataset.cat;
+  });
+});
+
+async function startQuiz() {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('loadingScreen').classList.remove('hidden');
+  document.getElementById('scoreBar').classList.remove('hidden');
+
+  score = 0; correct = 0; wrong = 0; streak = 0; currentIndex = 0;
+  updateScoreBar();
+
+  try {
+    questions = await generateQuestions(selectedCategory);
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('totalQ').textContent = questions.length;
+    showQuestion();
+  } catch (e) {
+    document.getElementById('loadingText').textContent = "❌ Erreur de connexion. Vérifiez votre internet.";
+    console.error(e);
+  }
+}
+
+async function generateQuestions(category) {
+  let pool = [];
+
+  if (category === "Tous les thèmes") {
+    Object.keys(QUESTION_BANK).forEach(cat => {
+      QUESTION_BANK[cat].forEach(q => pool.push({ ...q, category: cat }));
+    });
+  } else {
+    pool = (QUESTION_BANK[category] || []).map(q => ({ ...q, category }));
+  }
+
+  const shuffled = shuffleArray(pool);
+  const selected = shuffled.slice(0, QUESTIONS_PER_GAME);
+
+  // Petit délai simulé pour garder l'effet "chargement" visuel
+  await new Promise(resolve => setTimeout(resolve, 400));
+
+  return selected;
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[currentIndex];
+
+  document.getElementById('questionScreen').classList.remove('hidden');
+  document.getElementById('qCategory').textContent = q.category || selectedCategory;
+  document.getElementById('qNumber').textContent = `Q${currentIndex+1} / ${questions.length}`;
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('currentQ').textContent = currentIndex + 1;
+  document.getElementById('progressFill').style.width = ((currentIndex / questions.length) * 100) + "%";
+
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = "";
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i, q.answer, q.explanation);
+    grid.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = true;
+  nextBtn.textContent = currentIndex < questions.length - 1 ? "Question suivante →" : "🏆 Voir mes résultats";
+}
+
+function selectAnswer(selected, correct_idx, explanation) {
+  if (answered) return;
+  answered = true;
+
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct_idx) btn.classList.add('correct');
+    if (i === selected && selected !== correct_idx) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (selected === correct_idx) {
+    score += 10;
+    correct++;
+    streak++;
+    fb.className = 'feedback correct-fb show';
+    fb.textContent = `✅ Bonne réponse ! ${explanation}`;
+  } else {
+    wrong++;
+    streak = 0;
+    fb.className = 'feedback wrong-fb show';
+    fb.textContent = `❌ Mauvaise réponse. ${explanation}`;
+  }
+
+  updateScoreBar();
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= questions.length) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('questionScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.remove('hidden');
+  document.getElementById('progressFill').style.width = "100%";
+
+  const pct = Math.round((correct / questions.length) * 100);
+  document.getElementById('finalScore').textContent = correct;
+  document.getElementById('scoreOutOf').textContent = `sur ${questions.length} questions`;
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statPct').textContent = pct + "%";
+
+  let msg, sub;
+  if (pct >= 90) { msg = "Excellent ! 🎉"; sub = "Tu es un vrai champion de culture générale !"; }
+  else if (pct >= 70) { msg = "Très bien ! 👏"; sub = "Belle performance, continue comme ça !"; }
+  else if (pct >= 50) { msg = "Pas mal ! 😊"; sub = "Tu peux encore faire mieux, retente ta chance !"; }
+  else { msg = "Courage ! 💪"; sub = "Rejoue pour améliorer ton score !"; }
+
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('resultSub').textContent = sub;
+}
+
+function restartQuiz() {
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('scoreBar').classList.add('hidden');
+  document.getElementById('questionScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+}
+
+function updateScoreBar() {
+  document.getElementById('currentScore').textContent = score;
+  document.getElementById('currentStreak').textContent = streak;
+}
+</script>
+</body>
+</html>
